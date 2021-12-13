@@ -1,0 +1,16 @@
+Script for correcting Warkworth phases due to feed angle rotation.
+
+Az/El antennas have a feed rotation equal to 2xparallatic angle, where the phase is subtracted from the rcp and added to the lcp.
+This is important for polemetry and/or dual pol phase referencing when one wishes to average/combine polarisations to increase SNR.
+
+Warkworth is a beam-waveguide antenna, the feed does not rotate when the antenna does. This leads to the feed angle 'rotation' being 
+
+-p + az - el 
+
+This is not (yet?) included in the AIPS task CLCOR, OPTYE=PANG, so this script does the correction instead.
+
+Script uses python2/parseltongue/obit. Necessary packages are:
+numpy
+argparse
+astropy
+datetime
