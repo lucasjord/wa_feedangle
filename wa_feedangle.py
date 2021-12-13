@@ -4,7 +4,7 @@ from AIPSTask import AIPSTask, AIPSList
 from AIPSData import AIPSUVData, AIPSImage
 from Wizardry.AIPSData import AIPSUVData as WAIPSUVData
 
-import numpy as np, argparse, sys, os
+import numpy as np, argparse, sys, os, datetime
 from numpy import cos, sin, tan, arcsin, arccos, arctan2
 
 from astropy.coordinates import SkyCoord
