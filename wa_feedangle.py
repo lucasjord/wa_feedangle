@@ -83,7 +83,7 @@ def runtbin(outdata,intext):
     tbin.intext   = intext
     tbin()
 
-def runclcal(indata,snver,cl_in,cl_out,refant,interpol='',,dobtween=1):
+def runclcal(indata,snver,cl_in,cl_out,refant,interpol='',dobtween=1):
     clcal          = AIPSTask('CLCAL')
     clcal.indata   = indata
     clcal.refant   = refant
