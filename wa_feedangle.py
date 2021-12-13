@@ -365,7 +365,7 @@ def run_wa_pang(indata,refant,swpol,pang,cl_in=3,cl_out=4,sn_out=0):
     runtbin(indata,'wa_pang.TBIN') 
     # and apply solution SN_OUT + CL_IN = CL_OUT
     # needs to be new SN table 
-    runclcal(indata,sn_out,cl_in,cl_out,'',1,refant) 
+    runclcal(indata,sn_out,cl_in,cl_out,refant) 
     return 1
 
 ################################################
