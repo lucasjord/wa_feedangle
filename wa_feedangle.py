@@ -8,7 +8,7 @@ import numpy as np, argparse, sys, os
 from numpy import cos, sin, tan, arcsin, arccos, arctan2
 
 from astropy.coordinates import SkyCoord
-from astopy.time import Time as aTime
+from astropy.time import Time as aTime
 import astropy.units as u
 
 ################################################
