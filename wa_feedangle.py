@@ -20,22 +20,22 @@ def main():
     parser.add_argument('aips_id',
                         help='AIPS ID, e.g 666',type=int)
     # optional arguments
-    parser.add_argument('-k','klass',
+    parser.add_argument('-k','--klass',
                         help='Catalogue KLASS. Default UVDATA',type=str,default='UVDATA')
-    parser.add_argument('-q','seq',
+    parser.add_argument('-q','--seq',
                         help='Catalogue SEQ. Default 1',type=int,default=1)
-    parser.add_argument('-d','disk',
+    parser.add_argument('-d','--disk',
                         help='Catalogue DISK. Default 1',type=int,default=1)
-    parser.add_argument('-i','cl_in',
+    parser.add_argument('-i','--cl_in',
                         help='CL table in. Default HIGHVER',type=int,default=None)    
-    parser.add_argument('-o','cl_out',
+    parser.add_argument('-o','--cl_out',
                         help='CL table out. Default HIGHVER+1',type=int,default=None)
-    parser.add_argument('-s','sn_out',
+    parser.add_argument('-s','--sn_out',
                         help='SN table out. Default HIGHVER+1',type=int,default=None)
-    parser.add_argument('-pang',
+    parser.add_argument('--pang',
                         help='Also add parallactic angle correction.',
                         action="store_true",default=False)
-    parser.add_argument('-swpol',
+    parser.add_argument('--swpol',
                         help='Swap correction sign.',
                         action="store_true",default=False)
     args = parser.parse_args()
