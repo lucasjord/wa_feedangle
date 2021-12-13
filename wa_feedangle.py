@@ -69,7 +69,7 @@ def main():
     sn_high   = max(sn_tables)
     if args.sn_out==None: args.sn_out = sn_high + 1
     #
-    success   = run_wa_pang(indata,1,args.swpol,args.cl_in,args.clout,args.sn_out)
+    success   = run_wa_pang(indata,1,args.swpol,args.cl_in,args.cl_out,args.sn_out)
     if success==0:
         print 'WAPANG did not run.' 
     if success==1:
