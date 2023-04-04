@@ -66,9 +66,14 @@ def main():
     '''
     Running feed angle correction.
     '''
-    sn_tables = [s[0] for s in indata.tables if 'CL' in s[-1]] + [0]
+    sn_tables = [s[0] for s in indata.tables if 'SN' in s[-1]] + [0]
     sn_high   = max(sn_tables)
-    if args.sn_out==None: args.sn_out = sn_high + 1
+    if args.sn_out==None: 
+        args.sn_out = sn_high + 1
+    elif sn_high>=args.sn_out:
+        print 'Deleting old SN tables > {}'.format(args.sn_out)
+        while indata.table_highver('SN')>=args.sn_out:
+            indata.zap_table('SN',indata.table_highver('SN'))
     #
     success   = run_wa_pang(indata,1,args.swpol,args.cl_in,args.cl_out,args.sn_out)
     if success==0:
@@ -145,18 +150,19 @@ def run_wa_pang(indata,refant,swpol,pang,cl_in=3,cl_out=4,sn_out=0):
     ha_rad = (st*u.hourangle).to(u.rad)-(ra*u.deg).to(u.rad)
     
     ## calculate elevation angle
-    print 'WAPANG: Calculating azimuth angle.'
+    print 'WAPANG: Calculating elevation angle.'
     sine = sin(L)*sin((dec*u.deg).to(u.rad)) + cos(L)*cos((dec*u.deg).to(u.rad))*cos(ha_rad)
     el   = arcsin(sine)
 
     ## calculate azimuth angle
-    print 'WAPANG: Calculating elevation angle.'
+    print 'WAPANG: Calculating azimuth angle.'
     tan_an = -cos((dec*u.deg).to(u.rad))*sin(ha_rad) 
     tan_ad = ( cos(L)*sin((dec*u.deg).to(u.rad))
              - sin(L)*cos((dec*u.deg).to(u.rad))*cos(ha_rad) )
     az     = arctan2(tan_an,tan_ad)
 
     ## calculate parallactic angle 
+    print 'WAPANG: Calculating parrallactic angle.'
     tan_pn = cos(L)*sin(ha_rad)
     tan_pd = ( sin(L)*cos((dec*u.deg).to(u.rad)) 
              - cos(L)*sin((dec*u.deg).to(u.rad))*cos(ha_rad) )
@@ -313,7 +319,7 @@ def run_wa_pang(indata,refant,swpol,pang,cl_in=3,cl_out=4,sn_out=0):
        'NO_ANT  =            4', 'NO_POL  =            2',
        'NO_IF   =            8', 'NO_NODES=            0',
        'MGMOD   =   1.00000000000000000D+00',
-       'APPLIED =                    F', 'REVISION=           11',
+       'APPLIED =                    F', 'REVISION=            1',
        'SNORIGIN=            0',
        "HISTORY TBOUT  /SN table version  1 of INNAME='S001K_C     .UVDATA.   1'",
        'HISTORY TBOUT  / copied to the text file HOME:sn_poo.TBOUT',
@@ -345,6 +351,7 @@ def run_wa_pang(indata,refant,swpol,pang,cl_in=3,cl_out=4,sn_out=0):
     header[133] = 'TFDIM25 =                   {:2.0f} / Dimension of field 25'.format(nif)
     header[138] = 'TFDIM26 =                   {:2.0f} / Dimension of field 26'.format(nif)
 
+    header[141] = 'NO_ANT  =           {:>2.0f}'.format(len(indata.antennas))
     header[143] = 'NO_IF   =           {:>2.0f}'.format(nif)
 
     ## print solutions to file to make SN_OUT
@@ -355,7 +362,7 @@ def run_wa_pang(indata,refant,swpol,pang,cl_in=3,cl_out=4,sn_out=0):
             for i in range(nif):
                 if i==0: 
                     print >> w, '{0:8.0f}{1:>24.15E}{2:>15.6E}{3:>11.0f}{4:>11.0f}{5:>11.0f}{6:>11.0f}{7:>15.3f}{8:>11.0f}{9:>15.3f}{10:>15.3f}{11:>15.3f}{12:>15.6f}{13:>15.6f}{14:>15.3f}{15:>15.3f}{16:>15.3f}{17:>11.0f}{9:>15.3f}{10:>15.3f}{11:>15.3f}{18:>15.6f}{19:>15.6f}{14:>15.3f}{15:>15.3f}{16:>15.3f}{17:>11.0f}'.format(
-                j+1, t[j],dt[j]/(24*3600.),sid[j],4,1,0,0,0,0,0,0,cos( feed_angle[j]),sin( feed_angle[j]),0,0,1,refant,cos(-feed_angle[j]),sin(-feed_angle[j])) 
+                j+1, t[j],dt[j]/(24*3600.),sid[j],wa_num,1,0,0,0,0,0,0,cos( feed_angle[j]),sin( feed_angle[j]),0,0,1,refant,cos(-feed_angle[j]),sin(-feed_angle[j])) 
                 else: 
                     print >> w, '{0:8.0f}{1:>24s}{1:>15s}{1:>11s}{1:>11s}{1:>11s}{1:>11s}{1:>15s}{1:>11s}{1:>15s}{1:>15s}{1:>15s}{2:>15.6f}{3:>15.6f}{4:>15.3f}{5:>15.3f}{6:>15.3f}{7:>11.0f}{1:>15s}{1:>15s}{1:>15s}{8:>15.6f}{9:>15.6f}{4:>15.3f}{5:>15.3f}{6:>15.3f}{7:>11.0f}'.format(
                 j+1,"''",cos( feed_angle[j]),sin( feed_angle[j]),0,0,1,refant,cos(-feed_angle[j]),sin(-feed_angle[j]))
