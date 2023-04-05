@@ -4,7 +4,7 @@ from AIPSTask import AIPSTask, AIPSList
 from AIPSData import AIPSUVData, AIPSImage
 from Wizardry.AIPSData import AIPSUVData as WAIPSUVData
 
-import numpy as np, argparse, sys, os, datetime
+import numpy as np, argparse, sys, os, datetime, pdb
 from numpy import cos, sin, tan, arcsin, arccos, arctan2
 
 from astropy.coordinates import SkyCoord
@@ -44,7 +44,7 @@ def main():
     Look for input catalogue.
     '''
     AIPS.userno = args.aips_id
-
+    #pdb.set_trace()
     indata = AIPSUVData(args.inname,args.klass,args.disk,args.seq)
     if not indata.exists():
         sys.exit('{}.{}.{}.{} does not exist on AIPSID {}'.format(args.inname,
@@ -59,10 +59,12 @@ def main():
         args.cl_out = args.cl_in + 1
     elif args.cl_in!=None and args.cl_out==None:
         args.cl_out = args.cl_in + 1
+    print args.cl_out
     #
-    cl_high = indata.table_highver
+    cl_high = indata.table_highver('CL')
     if args.cl_in > cl_high:
         sys.exit('CL{} does not exist. Cannot use to calibrate data. Highest version is CL{}'.format(args.cl_in,cl_high))
+    else: print 'CL tables fine'
     '''
     Running feed angle correction.
     '''
@@ -73,9 +75,13 @@ def main():
     elif sn_high>=args.sn_out:
         print 'Deleting old SN tables > {}'.format(args.sn_out)
         while indata.table_highver('SN')>=args.sn_out:
+            print 'Deleting SN table {}'.format(indata.table_highver('SN'))
             indata.zap_table('SN',indata.table_highver('SN'))
+    else: print 'SN tables fine'
     #
-    success   = run_wa_pang(indata,1,args.swpol,args.cl_in,args.cl_out,args.sn_out)
+    #pdb.set_trace()
+    success   = run_wa_pang(indata,1,args.swpol,args.pang,
+        args.cl_in,args.cl_out,args.sn_out)
     if success==0:
         print 'WAPANG did not run.' 
     if success==1:
@@ -85,20 +91,24 @@ def main():
 
 def runtbin(outdata,intext):
     tbin          = AIPSTask('TBIN')
+    tbin.default
     tbin.outdata  = outdata
     tbin.intext   = intext
     tbin()
 
-def runclcal(indata,snver,cl_in,cl_out,refant,interpol='',dobtween=1):
+def runclcal(indata,snver,clin,clout,refant,interpol='',dobtween=1):
+    print clout
     clcal          = AIPSTask('CLCAL')
+    clcal.default
     clcal.indata   = indata
     clcal.refant   = refant
     clcal.snver    = snver
     clcal.inver    = 0
-    clcal.gainver  = cl_in
-    clcal.gainuse  = cl_out
+    clcal.gainver  = clin
+    clcal.gainuse  = clout
     clcal.interpol = interpol
     clcal.dobtween = dobtween
+    #clcal.inp()
     clcal()
 
 class telescope:
